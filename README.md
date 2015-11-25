@@ -2,6 +2,8 @@
 
 Check compatibility between different SPDX licenses.
 
+I am not a lawyer and any results should be confirmed with a copyright lawyer if it's important to you.
+
 ## Installation
 
 Add this line to your application's Gemfile:
