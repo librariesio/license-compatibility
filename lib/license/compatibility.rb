@@ -18,10 +18,8 @@ module License
       case souce_type
       when :public_domain
         return true
-      when :permissive
+      when :permissive, :weak_copyleft
         [:permissive, :weak_copyleft, :copyleft, :strong_copyleft].include? derivative_type
-      when :weak_copyleft
-        [:weak_copyleft, :copyleft, :strong_copyleft].include? derivative_type
       when :copyleft
         [:copyleft, :strong_copyleft].include? derivative_type
       when :strong_copyleft
