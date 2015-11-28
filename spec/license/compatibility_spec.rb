@@ -24,4 +24,8 @@ describe License::Compatibility do
   it 'Public Domain software software cannot be built on AGPL software' do
     expect(License::Compatibility.forward_compatiblity('AGPL-3.0','Unlicense')).to eq(false)
   end
+
+  it 'Public Domain software software can be built on MIT software' do
+    expect(License::Compatibility.forward_compatiblity('MIT','Unlicense')).to eq(true)
+  end
 end

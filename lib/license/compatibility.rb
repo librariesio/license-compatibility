@@ -19,7 +19,7 @@ module License
       when :public_domain
         return true
       when :permissive, :weak_copyleft
-        [:permissive, :weak_copyleft, :copyleft, :strong_copyleft].include? derivative_type
+        [:public_domain, :permissive, :weak_copyleft, :copyleft, :strong_copyleft].include? derivative_type
       when :copyleft
         [:copyleft, :strong_copyleft].include? derivative_type
       when :strong_copyleft
