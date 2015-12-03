@@ -9,8 +9,8 @@ module License
       'DSDP', 'ECL-2.0', 'BSD-3-Clause-Attribution']
     WEAK_COPYLEFT = ['LGPL-3.0', 'LGPL-2.0', 'LGPL-2.0+', 'LGPL-2.1', 'LGPL-2.1+',
       'LGPL-3.0', 'LGPL-3.0+', 'MPL-2.0', 'EPL-1.0']
-    COPYLEFT = ['GPL-3.0', 'GPL-2.0', 'GPL-2.0+', 'GPL-3.0+']
-    STRONG_COPYLEFT = ['AGPL-1.0', 'AGPL-3.0']
+    STRONG_COPYLEFT = ['GPL-3.0', 'GPL-2.0', 'GPL-2.0+', 'GPL-3.0+']
+    NETWORK_COPYLEFT = ['AGPL-1.0', 'AGPL-3.0']
 
     def self.forward_compatiblity(source_license, derivative_license)
       souce_type = license_type(source_license)
@@ -20,10 +20,10 @@ module License
         return true
       when :permissive, :weak_copyleft
         [:public_domain, :permissive, :weak_copyleft, :copyleft, :strong_copyleft].include? derivative_type
-      when :copyleft
-        [:copyleft, :strong_copyleft].include? derivative_type
       when :strong_copyleft
-        [:strong_copyleft].include? derivative_type
+        [:strong_copyleft, :network_copyleft].include? derivative_type
+      when :network_copyleft
+        [:network_copyleft].include? derivative_type
       else
         raise 'Unknown license compatiblity'
       end
@@ -37,10 +37,10 @@ module License
         :permissive
       elsif WEAK_COPYLEFT.include?(license)
         :weak_copyleft
-      elsif COPYLEFT.include?(license)
-        :copyleft
       elsif STRONG_COPYLEFT.include?(license)
         :strong_copyleft
+      elsif NETWORK_COPYLEFT.include?(license)
+        :network_copyleft
       else
         raise 'Unknown license type'
       end
