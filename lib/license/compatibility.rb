@@ -5,10 +5,10 @@ module License
     PUBLIC_DOMAIN = ['PDDL-1.0', 'SAX-PD', 'Unlicense', 'CC0-1.0']
     PERMISSIVE = ['MIT', 'BSD-3-Clause', 'WTFPL', 'BSD-2-Clause', 'ISC',
       'Apache-2.0', 'AFL-1.1', 'AFL-1.2', 'AFL-2.0', 'AFL-2.1', 'AFL-3.0',
-      'Artistic-2.0', 'Artistic-2.0', 'EPL-1.0', 'MPL-2.0', 'BSD-3-Clause-Clear',
+      'Artistic-2.0', 'Artistic-2.0', 'BSD-3-Clause-Clear',
       'DSDP', 'ECL-2.0', 'BSD-3-Clause-Attribution']
     WEAK_COPYLEFT = ['LGPL-3.0', 'LGPL-2.0', 'LGPL-2.0+', 'LGPL-2.1', 'LGPL-2.1+',
-      'LGPL-3.0', 'LGPL-3.0+']
+      'LGPL-3.0', 'LGPL-3.0+', 'MPL-2.0', 'EPL-1.0']
     COPYLEFT = ['GPL-3.0', 'GPL-2.0', 'GPL-2.0+', 'GPL-3.0+']
     STRONG_COPYLEFT = ['AGPL-1.0', 'AGPL-3.0']
 
