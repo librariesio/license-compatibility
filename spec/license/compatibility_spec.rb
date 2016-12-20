@@ -36,4 +36,8 @@ describe License::Compatibility do
   it 'GPL-2.0+ software can be built on MIT software' do
     expect(License::Compatibility.forward_compatiblity('MIT', 'GPL-2.0+')).to eq(true)
   end
+
+  it 'LGPL-2.1+ software can be built on GPL-3.0+ software' do
+    expect(License::Compatibility.forward_compatiblity('GPL-3.0+', 'LGPL-2.1+')).to eq(true)
+  end
 end

@@ -12,7 +12,7 @@ module License
       when :permissive, :weak_copyleft
         [:public_domain, :permissive, :weak_copyleft, :copyleft, :strong_copyleft, :network_copyleft].include? derivative_type
       when :strong_copyleft
-        [:strong_copyleft, :network_copyleft].include? derivative_type
+        [:weak_copyleft, :strong_copyleft, :network_copyleft].include? derivative_type
       when :network_copyleft
         [:network_copyleft].include? derivative_type
       else
