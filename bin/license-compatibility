@@ -1,0 +1,62 @@
+#!/usr/bin/env ruby
+
+
+require 'license/compatibility'
+
+
+USAGE = <<ENDUSAGE
+Usage: license-compatibility -h | -v | -s LICENSE_LIST | -a PKG_LICENCE_LIST
+ENDUSAGE
+
+HELP = <<ENDHELP
+   -h, --help       Show this help.
+   -v, --version    Show the version number (#{License::Compatibility::VERSION}).
+
+   -s, --simple LICENSE_LIST
+                    Check the compatibility between each possible combination of given licenses.
+                    LICENSE_LIST is a list of arguments.
+   -a, --advanced PKG_LICENSE_LIST
+                    Check the overall licenses compatibility for a project's dependencies.
+                    PKG_LICENSE_LIST is a list of arguments formatted like PACKAGE:LICENSE.
+ENDHELP
+
+# ARGS = { :shell=>'default', :writer=>'chm' } # Setting default values
+ARGS = {}
+# UNFLAGGED_ARGS = [ :directory ]              # Bare arguments (no flag)
+# next_arg = UNFLAGGED_ARGS.first
+next_arg = nil
+ARGV.each do |arg|
+  case arg
+    when '-h','--help' then
+      puts USAGE
+      puts HELP
+      exit
+    when '-v','--version' then
+      puts "license-compatibility v#{License::Compatibility::VERSION}"
+      exit
+    when '-s','--simple' then next_arg = :simple_list
+    when '-a','--advanced' then next_arg = :advanced_list
+    else
+      if next_arg
+        ARGS[next_arg] = [] unless ARGS[next_arg]
+        ARGS[next_arg] += [arg]
+        # UNFLAGGED_ARGS.delete( next_arg )
+      end
+  end
+end
+
+if ARGS[:simple_list]
+  result = true
+  ARGS[:simple_list].permutation(2).to_a.each { |couple|
+    intermediate_result = License::Compatibility.forward_compatiblity(couple[0], couple[1])
+    print couple[0], " is not forward compatible with ", couple[1] unless intermediate_result
+    result &= intermediate_result
+  }
+  exit result
+elsif ARGS[:advanced_list]
+  puts "Not implemented yet"
+  exit
+end
+
+puts USAGE
+exit
