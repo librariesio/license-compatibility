@@ -3,7 +3,7 @@ require "license/compatibility/version"
 
 module License
   module Compatibility
-    def self.forward_compatiblity(source_license, derivative_license)
+    def self.forward_compatibility(source_license, derivative_license)
       souce_type = license_type(source_license)
       derivative_type = license_type(derivative_license)
       case souce_type
