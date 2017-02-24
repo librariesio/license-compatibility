@@ -2,75 +2,28 @@
 
 
 require 'license/compatibility'
-require 'optparse'
 
-options = {}
+options = License::CommandLine.parse(ARGV)
 
-option_parser = OptionParser.new do |opts|
-  executable_name = File.basename($PROGRAM_NAME)
-  opts.banner = "Usage: #{executable_name} -h | -v | -r FILE [LICENSE_LIST | PKG_LICENSE_LIST]"
-  opts.on('-r', '--read FILE', 'Read a file instead of passing arguments to the command line.') do |file|
-    unless File.exist?(file)
-      raise ArgumentError, file, ': no such file'
-    end
-    options[:read] = file
-  end
-  opts.on('-v', '--version', "Show the program version (#{License::Compatibility::VERSION})") do
-    puts "license-compatibility v#{License::Compatibility::VERSION}"
-    exit
-  end
-end
+status = true
 
-option_parser.parse!
+if options[:version]
+  puts options[:version]
 
-def check_positional_args(args)
-  licenses = false
-  packages = false
-  prepared = []
-  args.each { |arg|
-    split = arg.split(':', 2)
-    if split.length == 2
-      prepared.push(split)
-      packages = true
-    else
-      prepared += split
-      licenses = true
-    end
-    raise 'Invalid arguments: you must not mix license and package:license arguments' if (licenses && packages)
-  }
-  return (if packages then 'packages' else 'licenses' end), prepared
-end
+elsif options[:help]
+  puts options[:help]
 
-def license_list(l)
-  # filter unique licenses
-  result = true
-  l.permutation(2).to_a.each { |couple|
-    intermediate_result = License::Compatibility.forward_compatibility(couple[0], couple[1])
-    print couple[0], ' is not forward-compatible with ', couple[1], "\n" unless intermediate_result
-    result &= intermediate_result
-  }
-  exit result
-end
-
-def package_licence_list(l)
-  result = true
-  l.permutation(2).to_a.each { |couple|
-    intermediate_result = License::Compatibility.forward_compatibility(couple[0][1], couple[1][1])
-    print couple[0][0], ' (', couple[0][1], ') is not forward-compatible with ', couple[1][0], ' (', couple[1][1], ")\n" unless intermediate_result
-    result &= intermediate_result
-  }
-  exit result
-end
-
-if options[:read]
+elsif options[:read]
   puts 'Not implemented'
+  status = false
+
 else
-  type, args = check_positional_args(ARGV)
+  type, args = License::CommandLine.parse_positional(ARGV)
   case type
-    when 'licenses'; license_list(args)
-    when 'packages'; package_licence_list(args)
+    when 'licenses'; status = License::Compatibility.check_license_list(args)
+    when 'packages'; status = License::Compatibility.check_package_licence_list(args)
     else raise 'Unrecognized args'
   end
 end
 
-exit
+exit status

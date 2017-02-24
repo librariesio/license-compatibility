@@ -1,0 +1,3 @@
+something:MIT
+that_is:ISC
+tested:GPL-3.0

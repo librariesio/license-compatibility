@@ -1,4 +1,5 @@
 require 'json'
+require 'optparse'
 require "license/compatibility/version"
 
 module License
@@ -40,5 +41,77 @@ module License
         raise 'Unknown license type'
       end
     end
+
+    def self.check_license_list(list)
+      # filter unique licenses
+      result = true
+      list.permutation(2).to_a.each { |couple|
+        intermediate_result = self.forward_compatibility(couple[0], couple[1])
+        print couple[0], ' is not forward-compatible with ', couple[1], "\n" unless intermediate_result
+        result &= intermediate_result
+      }
+      result
+    end
+
+    def self.check_package_licence_list(list)
+      result = true
+      list.permutation(2).to_a.each { |couple|
+        intermediate_result = self.forward_compatibility(couple[0][1], couple[1][1])
+        print couple[0][0], ' (', couple[0][1], ') is not forward-compatible with ', couple[1][0], ' (', couple[1][1], ")\n" unless intermediate_result
+        result &= intermediate_result
+      }
+      result
+    end
+  end
+
+  module CommandLine
+    def self.parse(args)
+      options = {}
+      unless args
+        return options
+      end
+      option_parser = OptionParser.new do |opts|
+        executable_name = File.basename($PROGRAM_NAME)
+        opts.banner = "Usage: #{executable_name} -h | -v | -r FILE [LICENSE_LIST | PKG_LICENSE_LIST]"
+
+        opts.on('-r', '--read FILE', 'Read a file instead of passing arguments to the command line.') do |file|
+          unless File.exist?(file)
+            raise ArgumentError, "#{file}: no such file"
+          end
+          options[:read] = file
+        end
+
+        opts.on('-v', '--version', "Show the program version (#{License::Compatibility::VERSION}).") do
+          options[:version] = "license-compatibility v#{License::Compatibility::VERSION}"
+          return options
+        end
+
+        opts.on("-h", "--help", "Print this help.") do
+          options[:help] = opts.to_s
+          return options
+        end
+      end
+      option_parser.parse!(args)
+      return options
+    end
+
+    def self.parse_positional(args)
+      licenses = false
+      packages = false
+      prepared = []
+      args.each { |arg|
+        split = arg.split(':', 2)
+        if split.length == 2
+          prepared.push(split)
+          packages = true
+        else
+          prepared += split
+          licenses = true
+        end
+        raise 'Invalid arguments: you must not mix license and package:license arguments' if (licenses && packages)
+      }
+      return (if packages then 'packages' else 'licenses' end), prepared
+    end
+
   end
 end
