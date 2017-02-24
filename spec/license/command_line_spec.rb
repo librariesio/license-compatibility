@@ -18,7 +18,7 @@ describe License::CommandLine do
   it 'parses correctly -r option with nonexistent file' do
     expect {
       License::CommandLine.parse(['-r', 'its_gone'])
-    }.to raise_error(ArgumentError, 'its_gone: no such file')
+    }.to raise_error(Errno::ENOENT, 'No such file or directory - its_gone')
   end
 
   it 'parses correctly -r option with existing file' do
@@ -37,15 +37,17 @@ describe License::CommandLine do
     expect(options).to eq({})
   end
 
-  # it 'fails when mixed args' do
-  #   expect(License::CommandLine.check_positional_args(['MIT', 'PKG1:ISC'])).to raise_error
-  # end
-  #
-  # it 'recognizes license list' do
-  #   expect(License::CommandLine.check_positional_args(['MIT', 'ISC'])).to raise_error
-  # end
-  #
-  # it 'recognizes package:license list' do
-  #   expect(License::CommandLine.check_positional_args(['PKG1:MIT', 'PKG2:ISC'])).to raise_error
-  # end
+  it 'fails when mixed args' do
+    expect {
+      License::CommandLine.parse_positional(['MIT', 'PKG1:ISC'])
+    }.to raise_error(ArgumentError, 'do not mix license and package:license arguments')
+  end
+
+  it 'recognizes license list' do
+    expect(License::CommandLine.parse_positional(['MIT', 'ISC'])).to eq(['licenses', ['MIT', 'ISC']])
+  end
+
+  it 'recognizes package:license list' do
+    expect(License::CommandLine.parse_positional(['PKG1:MIT', 'PKG2:ISC'])).to eq(['packages', [['PKG1', 'MIT'], ['PKG2', 'ISC']]])
+  end
 end

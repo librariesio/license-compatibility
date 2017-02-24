@@ -3,6 +3,10 @@ require 'optparse'
 require "license/compatibility/version"
 
 module License
+
+  EXEC = File.basename($PROGRAM_NAME)
+  USAGE = "Usage: #{EXEC} -h | -v | -r FILE [LICENSE_LIST | PKG_LICENSE_LIST]"
+
   module Compatibility
     def self.forward_compatibility(source_license, derivative_license)
       souce_type = license_type(source_license)
@@ -67,16 +71,15 @@ module License
   module CommandLine
     def self.parse(args)
       options = {}
-      unless args
-        return options
-      end
       option_parser = OptionParser.new do |opts|
-        executable_name = File.basename($PROGRAM_NAME)
-        opts.banner = "Usage: #{executable_name} -h | -v | -r FILE [LICENSE_LIST | PKG_LICENSE_LIST]"
+        opts.banner = USAGE
 
         opts.on('-r', '--read FILE', 'Read a file instead of passing arguments to the command line.') do |file|
           unless File.exist?(file)
-            raise ArgumentError, "#{file}: no such file"
+            raise Errno::ENOENT, "#{file}"
+          end
+          unless File.file?(file)
+            raise ArgumentError, "#{file} is a directory, you must specify a regular file"
           end
           options[:read] = file
         end
@@ -108,7 +111,7 @@ module License
           prepared += split
           licenses = true
         end
-        raise 'Invalid arguments: you must not mix license and package:license arguments' if (licenses && packages)
+        raise ArgumentError, 'do not mix license and package:license arguments' if (licenses && packages)
       }
       return (if packages then 'packages' else 'licenses' end), prepared
     end

@@ -3,9 +3,14 @@
 
 require 'license/compatibility'
 
-options = License::CommandLine.parse(ARGV)
+begin
+  options = License::CommandLine.parse(ARGV)
+rescue => e
+  STDERR.puts e
+  exit 2
+end
 
-status = true
+status = 0
 
 if options[:version]
   puts options[:version]
@@ -13,12 +18,31 @@ if options[:version]
 elsif options[:help]
   puts options[:help]
 
-elsif options[:read]
-  puts 'Not implemented'
-  status = false
-
 else
-  type, args = License::CommandLine.parse_positional(ARGV)
+
+  if options[:read]
+    args = []
+    File.read(options[:read]).split("\n").each { |line|
+      unless line.empty?
+        args.push(line)
+      end
+    }
+  else
+    args = ARGV
+  end
+
+  if args.empty?
+    STDERR.puts License::USAGE
+    exit 2
+  end
+
+  begin
+    type, args = License::CommandLine.parse_positional(args)
+  rescue => e
+    STDERR.puts e
+    exit 2
+  end
+
   case type
     when 'licenses'; status = License::Compatibility.check_license_list(args)
     when 'packages'; status = License::Compatibility.check_package_licence_list(args)
