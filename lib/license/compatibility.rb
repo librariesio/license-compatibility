@@ -1,17 +1,16 @@
 require 'json'
 require 'optparse'
-require "license/compatibility/version"
+require 'license/compatibility/version'
 
 module License
-
   EXEC = File.basename($PROGRAM_NAME)
-  USAGE = "Usage: #{EXEC} -h | -v | -r FILE [LICENSE_LIST | PKG_LICENSE_LIST]"
+  USAGE = "Usage: #{EXEC} [-h] [-v] [-r file] [args]"
 
   module Compatibility
     def self.forward_compatibility(source_license, derivative_license)
-      souce_type = license_type(source_license)
+      source_type = license_type(source_license)
       derivative_type = license_type(derivative_license)
-      case souce_type
+      case source_type
       when :public_domain
         return true
       when :permissive, :weak_copyleft
@@ -21,7 +20,7 @@ module License
       when :network_copyleft
         [:network_copyleft].include? derivative_type
       else
-        raise 'Unknown license compatiblity'
+        raise "Unknown license compatibility: #{source_license} and #{derivative_license}"
       end
     end
 
@@ -42,16 +41,30 @@ module License
       elsif license_data['network_copyleft'].include?(license)
         :network_copyleft
       else
-        raise 'Unknown license type'
+        raise "Unknown license type: #{license}"
       end
     end
 
+    def self.filter_known_licenses(list)
+      known = []
+      list.each { |license |
+        begin
+          self.license_type(license)
+          unless known.include? license
+            known.push(license)
+          end
+        rescue => e
+          STDERR.puts e
+        end
+      }
+      return known
+    end
+
     def self.check_license_list(list)
-      # filter unique licenses
       result = true
-      list.permutation(2).to_a.each { |couple|
+      self.filter_known_licenses(list).permutation(2).to_a.each { |couple|
         intermediate_result = self.forward_compatibility(couple[0], couple[1])
-        print couple[0], ' is not forward-compatible with ', couple[1], "\n" unless intermediate_result
+        print "#{couple[0]} is not forward-compatible with #{couple[1]}" unless intermediate_result
         result &= intermediate_result
       }
       result
@@ -59,9 +72,10 @@ module License
 
     def self.check_package_licence_list(list)
       result = true
-      list.permutation(2).to_a.each { |couple|
+      known_licenses = self.filter_known_licenses(list.map { |x| x[1] })
+      list.select { |x| known_licenses.include? x[1] }.permutation(2).to_a.each { |couple|
         intermediate_result = self.forward_compatibility(couple[0][1], couple[1][1])
-        print couple[0][0], ' (', couple[0][1], ') is not forward-compatible with ', couple[1][0], ' (', couple[1][1], ")\n" unless intermediate_result
+        puts "#{couple[0][0]} (#{couple[0][1]}) is not forward-compatible with #{couple[1][0]} (#{couple[1][1]})" unless intermediate_result
         result &= intermediate_result
       }
       result
@@ -72,9 +86,20 @@ module License
     def self.parse(args)
       options = {}
       option_parser = OptionParser.new do |opts|
-        opts.banner = USAGE
+        opts.banner = "#{USAGE}\n\n"
+        opts.banner += "Arguments:\n"
+        opts.banner += "    List of licenses or list of package:license couples (separated by ':').\n"
+        opts.banner += "    Example: 'MIT' 'GPL-3.0' or 'my_package:ISC' 'other_pkg:BSD-2-Clause'.\n"
+        opts.banner += "    Mixing the two formats is not allowed.\n"
+        opts.banner += "    Additional args after a --read option are accepted.\n\n"
+        opts.banner += "Options:"
 
-        opts.on('-r', '--read FILE', 'Read a file instead of passing arguments to the command line.') do |file|
+        opts.on('-l', '--list', 'Print the list of supported licenses.') do
+          options[:list] = License::Compatibility.license_data
+          return options
+        end
+
+        opts.on('-r', '--read FILE', 'Read arguments from file.') do |file|
           unless File.exist?(file)
             raise Errno::ENOENT, "#{file}"
           end
@@ -89,7 +114,7 @@ module License
           return options
         end
 
-        opts.on("-h", "--help", "Print this help.") do
+        opts.on('-h', '--help', 'Print this help.') do
           options[:help] = opts.to_s
           return options
         end
@@ -102,6 +127,7 @@ module License
       licenses = false
       packages = false
       prepared = []
+
       args.each { |arg|
         split = arg.split(':', 2)
         if split.length == 2
@@ -113,8 +139,14 @@ module License
         end
         raise ArgumentError, 'do not mix license and package:license arguments' if (licenses && packages)
       }
-      return (if packages then 'packages' else 'licenses' end), prepared
-    end
 
+      if packages
+        return 'packages', prepared
+      elsif licenses
+        return 'licenses', prepared
+      else
+        return 'unknown', prepared
+      end
+    end
   end
 end
