@@ -64,7 +64,7 @@ module License
       result = true
       self.filter_known_licenses(list).permutation(2).to_a.each { |couple|
         intermediate_result = self.forward_compatibility(couple[0], couple[1])
-        print "#{couple[0]} is not forward-compatible with #{couple[1]}" unless intermediate_result
+        puts "#{couple[0]} is not forward-compatible with #{couple[1]}" unless intermediate_result
         result &= intermediate_result
       }
       result
