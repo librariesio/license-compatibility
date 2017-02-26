@@ -22,8 +22,30 @@ Or install it yourself as:
 
 ## Usage
 
+On the command-line:
+
+`license-compatibility [-h] [-v] [-l] [-r file] [args]`
+
+Arguments are a list of licenses or a list of package:license couples.  
+Examples:
+```
+license-compatibility MIT GPL-3.0 Unlicense
+license-compatibility my_package:ISC other_pkg:BSD-2-Clause
+```
+Mixing the two formats is not allowed.
+Additional args after a --read option are accepted.
+
+Options:
+- **-l, --list**: Print the list of supported licenses.
+- **-r, --read FILE**: Read arguments from file.
+- **-v, --version**: Show the program version.
+- **-h, --help**: Print help message.
+
+
+In your code:
+
 ```ruby
-License::Compatibility.forward_compatiblity('MIT', 'GPL-3.0') #=> true
+License::Compatibility.forward_compatibility('MIT', 'GPL-3.0') #=> true
 ```
 
 ## Development

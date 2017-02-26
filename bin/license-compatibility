@@ -1,0 +1,62 @@
+#!/usr/bin/env ruby
+
+require 'license/compatibility'
+
+begin
+  options = License::CommandLine.parse(ARGV)
+rescue => e
+  STDERR.puts e
+  exit 2
+end
+
+status = 0
+
+if options[:version]
+  puts options[:version]
+
+elsif options[:help]
+  puts options[:help]
+
+elsif options[:list]
+  options[:list].each do |key, array|
+    puts "#{key}:"
+    array.each do |license|
+      puts "  #{license}"
+    end
+    puts
+  end
+
+else
+
+  args = ARGV
+  if options[:read]
+    File.read(options[:read]).split("\n").each { |line|
+      unless line.empty?
+        args.push(line)
+      end
+    }
+  end
+
+  if args.empty?
+    STDERR.puts License::USAGE
+    exit 2
+  end
+
+  begin
+    type, args = License::CommandLine.parse_positional(args)
+  rescue => e
+    STDERR.puts e
+    exit 2
+  end
+
+  case type
+    when 'licenses'; status = License::Compatibility.check_license_list(args)
+    when 'packages'; status = License::Compatibility.check_package_licence_list(args)
+    else
+      STDERR.puts 'Invalid arguments: they should be a list of licenses'
+      STDERR.puts '  or a list of package:license couples.'
+      status = 2
+  end
+end
+
+exit status
