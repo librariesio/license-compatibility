@@ -29,7 +29,7 @@ module License
     end
 
     def self.license_type(license)
-      license = license.gsub('+', '')
+      license = license.delete('+')
       if license_data['public_domain'].include?(license)
         :public_domain
       elsif license_data['permissive'].include?(license)
