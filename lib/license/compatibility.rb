@@ -4,7 +4,7 @@ require 'license/compatibility/version'
 
 module License
   EXEC = File.basename($PROGRAM_NAME)
-  USAGE = "Usage: #{EXEC} [-h] [-v] [-r file] [args]"
+  USAGE = "Usage: #{EXEC} [-h] [-v] [-l] [-r file] [args]"
 
   module Compatibility
     def self.forward_compatibility(source_license, derivative_license)

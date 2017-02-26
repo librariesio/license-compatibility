@@ -1,6 +1,5 @@
 #!/usr/bin/env ruby
 
-
 require 'license/compatibility'
 
 begin
@@ -19,7 +18,13 @@ elsif options[:help]
   puts options[:help]
 
 elsif options[:list]
-  puts options[:list]
+  options[:list].each do |key, array|
+    puts "#{key}:"
+    array.each do |license|
+      puts "  #{license}"
+    end
+    puts
+  end
 
 else
 
