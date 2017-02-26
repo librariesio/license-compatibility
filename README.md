@@ -1,8 +1,14 @@
 # License::Compatibility
 
-Check compatibility between different SPDX licenses.
+Check compatibility between different SPDX licenses, used by [Libraries.io](https://libraries.io) for checking dependency license compatibility.
 
-I am not a lawyer and any results should be confirmed with a copyright lawyer if it's important to you.
+[![Build Status](https://travis-ci.org/librariesio/license-compatibility.svg?branch=master)](https://travis-ci.org/librariesio/license-compatibility)
+[![Code Climate](https://img.shields.io/codeclimate/github/librariesio/license-compatibility.svg?style=flat)](https://codeclimate.com/github/librariesio/license-compatibility)
+[![Test Coverage](https://img.shields.io/codeclimate/coverage/github/librariesio/license-compatibility.svg?style=flat)](https://codeclimate.com/github/librariesio/license-compatibility)
+[![Code Climate](https://img.shields.io/codeclimate/issues/github/librariesio/license-compatibility.svg)](https://codeclimate.com/github/librariesio/license-compatibility/issues)
+[![license](https://img.shields.io/github/license/librariesio/license-compatibility.svg)](https://github.com/librariesio/license-compatibility/blob/master/LICENSE.txt)
+
+*n.b. I am not a lawyer and any results should be confirmed with a copyright lawyer if it's important to you.*
 
 ## Installation
 
@@ -26,7 +32,7 @@ On the command-line:
 
 `license-compatibility [-h] [-v] [-l] [-r file] [args]`
 
-Arguments are a list of licenses or a list of package:license couples.  
+Arguments are a list of licenses or a list of package:license couples.
 Examples:
 ```
 license-compatibility MIT GPL-3.0 Unlicense
@@ -57,7 +63,6 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/librariesio/license-compatibility. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
-
 
 ## License
 
