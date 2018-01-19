@@ -36,16 +36,16 @@
     "GPL-2.0",
     "MS-RL",
     "ODbL-1.0",
-    "OSL-1.0",
-    "OSL-1.1",
-    "OSL-2.0",
-    "OSL-2.1",
-    "OSL-3.0",
     "RPL-1.1",
     "RPL-1.5"
   ],
   "network_copyleft": [
     "AGPL-1.0",
-    "AGPL-3.0"
+    "AGPL-3.0",
+    "OSL-1.0",
+    "OSL-1.1",
+    "OSL-2.0",
+    "OSL-2.1",
+    "OSL-3.0"
   ]
 }
