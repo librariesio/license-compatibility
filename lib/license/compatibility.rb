@@ -67,6 +67,7 @@ module License
         puts "#{couple[0]} is not forward-compatible with #{couple[1]}" unless intermediate_result
         result &= intermediate_result
       }
+      puts "Licenses are compatible" if result
       result
     end
 
@@ -78,6 +79,7 @@ module License
         puts "#{couple[0][0]} (#{couple[0][1]}) is not forward-compatible with #{couple[1][0]} (#{couple[1][1]})" unless intermediate_result
         result &= intermediate_result
       }
+      puts "Licenses are compatible" if result
       result
     end
   end
