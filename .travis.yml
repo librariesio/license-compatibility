@@ -1,10 +1,13 @@
 language: ruby
 rvm:
-  - 2.4.2
-  - 2.5.0
+- 2.4.2
+- 2.5.0
 before_install:
-  - gem update --system
+- gem update --system
 cache: bundler
 sudo: false
 script:
-  - bundle exec rake spec && bundle exec codeclimate-test-reporter
+- bundle exec rake spec && bundle exec codeclimate-test-reporter
+notifications:
+  slack:
+    secure: oiwV4yIQ02WlJGGjKLy3nTdSOjasvWtdzfuhPoag6+/H+nVa+uVmwlWHW3aDYpuZD1UF6dUzKKpadU/YYsZW0xgwICfVFj0hUDb1XbfcJaDyzeiOQzax/XwMXS1m/CSzNukmBj10q90bvTavawK1NClRnLzaPT0hXwsR2ErTljDIzVC/lHRjc6vgEVh90z2iAlHTC2JHD4cCbiW0azSKESDUzyFK9G5HbxxiLKhF6/iv8KRVno4k7rnDEp00KCpM7/PwFhvU7gATQoQy4RurAqkueShgMGb87MqIH9UMYjKBrHKH08Gv0zDrJ0uVZD1GgxcAEqA1VPIWkcVRapuRJy98MNqHw0fjQgKxgN1sd0EE+IG6b21Ib3ds3EW3wzlyO02uQcvv1nMWHM6WM4CBoMPOcDbNCXH1JKIX0oekOX35HbEfc6cOZrYkpv9jw+1Dw/tEzncBxzssRISINYcj89esnFG9hSYtugRXBZkJNdhtafXrppRjpAa7aZqvGxRZfpW59fmn6CKvzKmvL3agEVWWT9FvBQMTleP28xlTFQBgfK0aQlOvMb/EZLIvTj1Fordji/oTaYOgwJZthtdOmfBV7f4c/PnL4pbtOMg7Qrbb+4lCJlT9np0Y/N/b1+kpmA2Q+hdm/ByYOx/s01o4wZ+2CeVPX7gavOxVIy+Oqx4=
